@@ -10,3 +10,11 @@ Pulsar operates based on the Pub-Sub messaging pattern (publish-subscribe). Prod
 
 -   [Pulsar](https://pulsar.apache.org/)
     -   [Run a Pulsar cluster locally with Docker Compose](https://pulsar.apache.org/docs/next/getting-started-docker-compose/)
+
+<br/>
+
+### Appendix
+
+**Difference between Apache Kafka and Apache Pulsar**
+
+![image-diff-with-kafka](README.assets/diff-with-kafka.png)
