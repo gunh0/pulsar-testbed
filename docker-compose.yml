@@ -20,7 +20,7 @@ services:
                    bin/generate-zookeeper-config.sh conf/zookeeper.conf && \
                    exec bin/pulsar zookeeper"
         healthcheck:
-            test: ["CMD", "bin/pulsar-zookeeper-ruok.sh"]
+            test: [ "CMD", "bin/pulsar-zookeeper-ruok.sh" ]
             interval: 10s
             timeout: 5s
             retries: 30
@@ -54,8 +54,6 @@ services:
             - clusterName=cluster-a
             - zkServers=zookeeper:2181
             - metadataServiceUri=metadata-store:zk:zookeeper:2181
-            # otherwise every time we run docker compose uo or down we fail to start due to Cookie
-            # See: https://github.com/apache/bookkeeper/blob/405e72acf42bb1104296447ea8840d805094c787/bookkeeper-server/src/main/java/org/apache/bookkeeper/bookie/Cookie.java#L57-68
             - advertisedAddress=bookie
             - BOOKIE_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
         depends_on:
@@ -63,7 +61,6 @@ services:
                 condition: service_healthy
             pulsar-init:
                 condition: service_completed_successfully
-        # Map the local directory to the container to avoid bookie startup failure due to insufficient container disks.
         volumes:
             - ./mnt_data/bookkeeper:/pulsar/data/bookkeeper
         command: bash -c "bin/apply-config-from-env.py conf/bookkeeper.conf && exec bin/pulsar bookie"
@@ -95,3 +92,48 @@ services:
             - "6650:6650"
             - "8080:8080"
         command: bash -c "bin/apply-config-from-env.py conf/broker.conf && exec bin/pulsar broker"
+        healthcheck:
+            test: [ "CMD", "curl", "-f", "http://localhost:8080/admin/v2/clusters" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
+
+    pulsar-manager:
+        image: apachepulsar/pulsar-manager:latest
+        container_name: pulsar-manager
+        networks:
+            - pulsar
+        environment:
+            - SPRING_CONFIGURATION_FILE=/pulsar-manager/pulsar-manager/application.properties
+            - server.port=7750
+            - jdbcDriverClassName=org.postgresql.Driver
+            - jdbcUrl=jdbc:postgresql://postgres:5432/pulsar_manager
+            - jdbcUsername=postgres
+            - jdbcPassword=your_password
+            - pulsar_admin_url=http://broker:8080
+        depends_on:
+            broker:
+                condition: service_healthy
+            postgres:
+                condition: service_healthy
+        ports:
+            - "9527:9527" # Frontend service port
+            - "7750:7750" # Backend service port
+
+    postgres:
+        image: postgres:12
+        environment:
+            POSTGRES_DB: pulsar_manager
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: your_password
+        networks:
+            - pulsar
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./mnt_data/postgres:/var/lib/postgresql/data
+        healthcheck:
+            test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+            interval: 10s
+            timeout: 5s
+            retries: 5
