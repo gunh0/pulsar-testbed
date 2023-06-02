@@ -6,10 +6,23 @@ Pulsar operates based on the Pub-Sub messaging pattern (publish-subscribe). Prod
 
 <br>
 
+### Getting Started
+
+**`pulsar-manager` URL Information**
+
+- Service URL : `http://broker:8080`
+- Bookie URL : `pulsar://localhost:6650`
+
+![env-info.png](./img/env-info.png)
+
+![storage-dashboard.png](./img/storage-dashboard.png)
+
+<br/>
+
 ### References
 
--   [Pulsar](https://pulsar.apache.org/)
-    -   [Run a Pulsar cluster locally with Docker Compose](https://pulsar.apache.org/docs/next/getting-started-docker-compose/)
+- [Pulsar](https://pulsar.apache.org/) : <https://pulsar.apache.org/>
+- [Run a Pulsar cluster locally with Docker Compose](https://pulsar.apache.org/docs/next/getting-started-docker-compose/) : <https://pulsar.apache.org/docs/next/getting-started-docker-compose/>
 
 <br/>
 

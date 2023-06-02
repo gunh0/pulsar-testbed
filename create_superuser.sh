@@ -15,7 +15,7 @@ curl -s \
     -H "Cookie: XSRF-TOKEN=$CSRF_TOKEN;" \
     -H 'Content-Type: application/json' \
     -X PUT http://localhost:7750/pulsar-manager/users/superuser \
-    -d '{"name": "admin", "password": "apachepulsar", "description": "test", "email": "username@test.org"}'
+    -d '{"name": "admin", "password": "password", "description": "test", "email": "username@test.org"}'
 
 # Check the result of the user creation
 if [ $? -eq 0 ]; then
