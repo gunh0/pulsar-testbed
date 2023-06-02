@@ -12,3 +12,6 @@ sub:
 
 check:
 	cd src && go run checker.go
+
+create-superuser:
+	bash create_superuser.sh
